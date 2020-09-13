@@ -229,10 +229,10 @@
 (use-package multiple-cursors
   :ensure t
   :bind
-  ("C-c m c"   . mc/edit-lines)
-  ("C-c m <"   . mc/mark-next-like-this)
-  ("C-c m >"   . mc/mark-previous-like-this)
-  ("C-c m C-<" . mc/mark-all-like-this))
+  ("C-S-c C-S-c" . mc/edit-lines)
+  ("C->"         . mc/mark-next-like-this)
+  ("C-<"         . mc/mark-previous-like-this)
+  ("C-c C-<"     . mc/mark-all-like-this))
 
 ;; Open Dash to describe a symbol
 (use-package dash-at-point
@@ -302,8 +302,12 @@
   (setq lsp-haskell-process-args-hie '()))
 
 ;; Scala
+(use-package scala-mode
+  :ensure t)
 
 ;; Python
+(use-package python-mode
+  :ensure t)
 
 ;; Lisps
 (use-package hl-sexp
