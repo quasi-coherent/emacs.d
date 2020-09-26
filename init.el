@@ -58,6 +58,7 @@
 ;;;;;;;;;;;;;;;;;;;;
 
 ;; Misc.
+(require 'whitespace)
 (setq whitespace-line-column 100)       ; line length limit
 (setq tab-always-indent 'complete)      ; smart tab behavior
 (setq-default indent-tabs-mode nil)     ; death to tabs!
@@ -74,6 +75,13 @@
   (show-smartparens-global-mode)
   (smartparens-global-mode t))
 
+;; Turn on subword mode globally (to have M-f/M-b respect camelCase)
+(use-package subword
+  :ensure t
+  :diminish subword-mode
+  :init
+  (global-subword-mode t))
+
 ;; Dealing with unnecessary whitespace
 (custom-set-variables '(show-trailing-whitespace t))
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -85,9 +93,13 @@
       `((".*" ,temporary-file-directory t)))
 
 ;; Autosave the undo-tree history
-(setq undo-tree-history-directory-alist
-      `((".*" . ,temporary-file-directory)))
-(setq undo-tree-auto-save-history t)
+(use-package undo-tree
+  :ensure t
+  :init
+  (global-undo-tree-mode t)
+  :config
+  (setq undo-tree-auto-save-history t)
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 
 ;; Show gutter line numbers in every buffer
 (global-display-line-numbers-mode)
@@ -109,8 +121,7 @@
   :ensure t
   :init
   (when (memq window-system '(mac ns x))
-    (setq exec-path-from-shell-variables '("PATH" "SHELL"
-                                           "PWD" "NIX_SSL_CERT_FILE"))
+    (setq exec-path-from-shell-copy-env '("NIX_SSL_CERT_FILE"))
     (exec-path-from-shell-initialize)))
 
 
@@ -127,11 +138,7 @@
    ("C-x C-b"       . helm-buffers-list)
    ("C-x b"         . helm-multi-files)
    ("M-x"           . helm-M-x)
-   ("M-y"           . helm-show-kill-ring)
-   :map helm-find-files-map
-   ("C-<backspace>" . helm-find-files-up-one-level)
-   ("C-f"           . helm-execute-persistent-action)
-   ([tab]           . helm-ff-RET))
+   ("M-y"           . helm-show-kill-ring))
   :init
   (defun daedreth/helm-hide-minibuffer ()
     (when (with-helm-buffer helm-echo-input-in-header-line)
@@ -218,6 +225,11 @@
     (kill-buffer)
     (jump-to-register :magit-fullscreen)))
 
+(use-package git-gutter-fringe
+  :ensure t
+  :init
+  (global-git-gutter-mode t))
+
 ;; Direnv integration
 (use-package direnv
  :ensure t
@@ -252,7 +264,6 @@
   :ensure t
   :config
     (setq switch-window-input-style 'minibuffer)
-    (setq switch-window-increase 4)
     (setq switch-window-threshold 2)
     (setq switch-window-shortcut-style 'qwerty)
     (setq switch-window-qwerty-shortcuts
@@ -275,7 +286,9 @@
   :ensure t)
 
 (use-package lsp-mode
+  :ensure t
   :hook
+  ; Languages for which an LSP server is installed
   (haskell-mode . lsp)
   :commands lsp)
 
@@ -290,30 +303,44 @@
 (use-package haskell-mode
   :ensure t
   :hook
-  (haskell-mode . subword-mode)
   (haskell-mode . eldoc-mode)
   (haskell-mode . haskell-indentation-mode)
   (haskell-mode . interactive-haskell-mode))
 
 (use-package lsp-haskell
-  :ensure t
-  :config
-  (setq lsp-haskell-process-path-hie "ghcide")
-  (setq lsp-haskell-process-args-hie '()))
+ :ensure t
+ :config
+ (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"))
 
 ;; Scala
 (use-package scala-mode
   :ensure t)
 
 ;; Python
-(use-package python-mode
-  :ensure t)
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
 
 ;; Lisps
 (use-package hl-sexp
   :ensure t
   :hook
   ((clojure-mode lisp-mode emacs-lisp-mode) . hl-sexp-mode))
+
+;; TypeScript
+(use-package typescript-mode
+  :ensure t)
+
+;; JS
+(use-package js2-mode
+  :ensure t
+  :mode "\\.js\\'")
+
+(use-package vue-mode
+  :ensure t
+  :config
+  (setq mmm-submode-decoration-level 0))
 
 ;; Markdown files
 (use-package markdown-mode

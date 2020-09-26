@@ -5,3 +5,5 @@ projectile-bookmarks.eld
 projectile.cache
 savefile/
 transient/
+undo/
+.lsp-session-v1
