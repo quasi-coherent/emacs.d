@@ -42,7 +42,6 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer) ; use ibuffer instead of buffer-menu
 (global-set-key (kbd "C-<return>") 'toggle-frame-fullscreen) ; easily enter fullscreen mode
 
-
 (use-package use-package-ensure-system-package
   :ensure t)
 
@@ -58,8 +57,6 @@
 ;;;;;;;;;;;;;;;;;;;;
 
 ;; Misc.
-(require 'whitespace)
-(setq whitespace-line-column 100)       ; line length limit
 (setq tab-always-indent 'complete)      ; smart tab behavior
 (setq-default indent-tabs-mode nil)     ; death to tabs!
 (column-number-mode t)                  ; show the column number in the mode line
@@ -121,7 +118,7 @@
   :ensure t
   :init
   (when (memq window-system '(mac ns x))
-    (setq exec-path-from-shell-copy-env '("NIX_SSL_CERT_FILE"))
+    (setq exec-path-from-shell-variables '("PATH" "NIX_PATH" "NIX_PROFILES" "NIX_SSL_CERT_FILE"))
     (exec-path-from-shell-initialize)))
 
 
@@ -232,10 +229,10 @@
 
 ;; Direnv integration
 (use-package direnv
- :ensure t
- :config
- (direnv-mode)
- (direnv-allow))
+  :ensure t
+  :config
+  (setq direnv-always-show-summary nil)
+  (direnv-mode +1))
 
 ;; Multiple cursors mode
 (use-package multiple-cursors
@@ -286,11 +283,16 @@
   :ensure t)
 
 (use-package lsp-mode
-  :ensure t
+  :after direnv
+  :preface
+  (setq lsp-keymap-prefix "C-c l")
+  ;; Experimental workaround to https://github.com/wbolster/emacs-direnv/issues/17,
+  (advice-add 'lsp :before 'direnv-update-environment)
   :hook
-  ; Languages for which an LSP server is installed
-  (haskell-mode . lsp)
-  :commands lsp)
+  ((lsp-mode . lsp-enable-which-key-integration)))
+
+(use-package lsp-ui
+  :commands lsp-ui-mode)
 
 (use-package lsp-ui
   :ensure t
@@ -301,20 +303,33 @@
 
 ;; Haskell
 (use-package haskell-mode
-  :ensure t
+  :config
+  (setq haskell-process-log t)
+  (setq haskell-process-show-debug-tips nil)
+  (setq haskell-process-suggest-remove-import-lines t)
+  (setq haskell-process-suggest-hoogle-imports t)
+  ;; This one grinds everything to a halt.
+  (setq-default flycheck-disabled-checkers '(haskell-stack-ghc))
   :hook
-  (haskell-mode . eldoc-mode)
-  (haskell-mode . haskell-indentation-mode)
   (haskell-mode . interactive-haskell-mode))
 
 (use-package lsp-haskell
- :ensure t
  :config
- (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper"))
+ (setq lsp-haskell-process-path-hie "haskell-language-server-wrapper")
+ :hook
+ (haskell-mode . lsp))
 
 ;; Scala
 (use-package scala-mode
-  :ensure t)
+  :ensure t
+  :hook
+  (scala-mode . lsp))
+
+(use-package sbt-mode
+  :ensure t
+  :commands sbt-start sbt-command)
+
+(use-package lsp-metals)
 
 ;; Python
 (use-package elpy
