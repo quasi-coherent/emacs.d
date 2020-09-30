@@ -7,3 +7,5 @@ savefile/
 transient/
 undo/
 .lsp-session-v1
+.dap-breakpoints
+recentf

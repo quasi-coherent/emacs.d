@@ -27,6 +27,8 @@
 (when (not package-archive-contents)
   (package-refresh-contents))
 
+(setq user-full-name "Daniel Donohue"
+      user-mail-address "d.michael.donohue@gmail.com")
 
 (when (not (package-installed-p 'use-package))
   (package-install 'use-package))
@@ -260,13 +262,13 @@
 (use-package switch-window
   :ensure t
   :config
-    (setq switch-window-input-style 'minibuffer)
-    (setq switch-window-threshold 2)
-    (setq switch-window-shortcut-style 'qwerty)
-    (setq switch-window-qwerty-shortcuts
-        '("a" "s" "d" "f" "j" "k" "l" "i" "o"))
-  :bind
-    ([remap other-window] . switch-window))
+  (global-set-key (kbd "C-x o") 'switch-window)
+  (setq switch-window-multiple-frames t)
+  (setq switch-window-input-style 'minibuffer)
+  (setq switch-window-threshold 2)
+  (setq switch-window-shortcut-style 'qwerty)
+  (setq switch-window-qwerty-shortcuts
+      '("a" "s" "d" "f" "j" "k" "l" "i" "o")))
 
 
 ;;;;;;;;;;;;;;;;;
@@ -287,9 +289,7 @@
   :preface
   (setq lsp-keymap-prefix "C-c l")
   ;; Experimental workaround to https://github.com/wbolster/emacs-direnv/issues/17,
-  (advice-add 'lsp :before 'direnv-update-environment)
-  :hook
-  ((lsp-mode . lsp-enable-which-key-integration)))
+  (advice-add 'lsp :before 'direnv-update-environment))
 
 (use-package lsp-ui
   :commands lsp-ui-mode)
