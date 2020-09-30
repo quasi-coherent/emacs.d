@@ -114,12 +114,12 @@
 ;;; MacOS specific things ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; On MacOS, Emacs inherits a limited environment if not started from the shell.
-;; And if you start from the shell, you're gonna have a bad time.
+;; On MacOS, Emacs inherits a limited environment if not started from a shell.
+;; And if you start from a shell, you're gonna have a bad time.
 (use-package exec-path-from-shell
   :ensure t
   :init
-  (when (memq window-system '(mac ns x))
+ (when (memq window-system '(mac ns x))
     (setq exec-path-from-shell-variables '("PATH" "NIX_PATH" "NIX_PROFILES" "NIX_SSL_CERT_FILE"))
     (exec-path-from-shell-initialize)))
 
@@ -259,16 +259,12 @@
 (global-set-key (kbd "C-M-s-k") 'close-all-buffers)
 
 ;; Easy switching between buffers
-(use-package switch-window
+(use-package ace-window
   :ensure t
+  :bind
+  ("C-x o" . ace-window)
   :config
-  (global-set-key (kbd "C-x o") 'switch-window)
-  (setq switch-window-multiple-frames t)
-  (setq switch-window-input-style 'minibuffer)
-  (setq switch-window-threshold 2)
-  (setq switch-window-shortcut-style 'qwerty)
-  (setq switch-window-qwerty-shortcuts
-      '("a" "s" "d" "f" "j" "k" "l" "i" "o")))
+  (setq aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)))
 
 
 ;;;;;;;;;;;;;;;;;
