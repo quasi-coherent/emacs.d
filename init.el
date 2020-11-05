@@ -400,7 +400,8 @@
 (use-package dhall-mode
   :ensure t
   :config
-  (setq dhall-format-arguments '("--ascii"))
+  (setq dhall-format-at-save nil)
+  (setq dhall-use-header-line nil)
   :mode "\\.dhall\\'")
 
 ;;; init.el ends here
