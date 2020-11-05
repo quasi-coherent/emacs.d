@@ -5,12 +5,15 @@
  ;; If there is more than one, they won't work right.
  '(indent-tabs-mode nil)
  '(initial-buffer-choice t)
+ '(lsp-haskell-process-path-hie "ghcide")
  '(package-archives
    '(("marmalade" . "https://marmalade-repo.org/packages/")
      ("melpa" . "https://melpa.org/packages/")
      ("elpa" . "https://elpa.gnu.org/packages/")))
  '(safe-local-variable-values
-   '((eval font-lock-add-keywords nil
+   '((lsp-haskell-process-args-hie quote nil)
+     (lsp-haskell-process-path-hie . "ghcide")
+     (eval font-lock-add-keywords nil
            `((,(concat "("
                        (regexp-opt
                         '("sp-do-move-op" "sp-do-move-cl" "sp-do-put-op" "sp-do-put-cl" "sp-do-del-op" "sp-do-del-cl")

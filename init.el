@@ -43,6 +43,9 @@
 (custom-set-variables '(use-package-verbose nil))
 (global-set-key (kbd "C-x C-b") 'ibuffer) ; use ibuffer instead of buffer-menu
 (global-set-key (kbd "C-<return>") 'toggle-frame-fullscreen) ; easily enter fullscreen mode
+(setq history-length 100)
+(put 'minibuffer-history 'history-length 50)
+(put 'kill-ring 'history-length 25)
 
 (use-package use-package-ensure-system-package
   :ensure t)
@@ -162,7 +165,6 @@
   :config
   (require 'helm-config)
   (helm-mode 1)
-  (helm-autoresize-mode 1)
   :hook
   (helm-mode .
              (lambda ()
@@ -297,6 +299,13 @@
 (use-package helm-lsp
   :commands helm-lsp-workspace-symbol)
 
+(use-package lsp-treemacs
+  :commands lsp-treemacs-errors-list)
+
+(use-package which-key
+  :config
+  (which-key-mode +1))
+
 ;; Haskell
 (use-package haskell-mode
   :config
@@ -304,6 +313,7 @@
   (setq haskell-process-show-debug-tips nil)
   (setq haskell-process-suggest-remove-import-lines t)
   (setq haskell-process-suggest-hoogle-imports t)
+  (setq haskell-stylish-on-save t)
   ;; This one grinds everything to a halt.
   (setq-default flycheck-disabled-checkers '(haskell-stack-ghc))
   :hook
@@ -353,6 +363,15 @@
   :config
   (setq mmm-submode-decoration-level 0))
 
+;; SQL
+(use-package sqlformat
+  :ensure t
+  :config
+  (setq sqlformat-command 'pgformatter)
+  (setq sqlformat-args '("-s2" "-g"))
+  :hook
+  (sql-mode . sqlformat-on-save-mode))
+
 ;; Markdown files
 (use-package markdown-mode
   :ensure t
@@ -372,9 +391,15 @@
 (use-package json-mode
   :ensure t)
 
+;; YAML
+(use-package yaml-mode
+  :ensure t)
+
 ;; Dhall configuration language
 (use-package dhall-mode
   :ensure t
+  :config
+  (setq dhall-format-arguments '("--ascii"))
   :mode "\\.dhall\\'")
 
 ;;; init.el ends here
