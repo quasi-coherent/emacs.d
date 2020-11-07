@@ -1,5 +1,7 @@
 auto-save-list/
 elpa/
+elpy/
+custom.el
 network-security.data
 projectile-bookmarks.eld
 projectile.cache
